@@ -46,6 +46,28 @@ app.post("/auth/login", async (req, res) => {
     refresh_token: data.session.refresh_token, });
 });
 
+app.get("/public/info", (req, res) => {
+   if (error) {
+    return res.status(401).json({ error: "Invalid login credentials" });
+  }
+
+  return res.status(200).json({ message: "Welcome stranger! This info is public." });
+});
+
+app.get("/protected/profile", (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ error: "Access token required" });
+  }
+  const parts = authHeader.split(" ");
+  if (parts.length !== 2 || parts[0] !== "Bearer" || !parts[1]) {
+    return res.status(401).json({ error: "Access token required" });
+  }
+
+  const token = parts[1];
+
+  return res.status(200).json({ message: "token received" });
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
